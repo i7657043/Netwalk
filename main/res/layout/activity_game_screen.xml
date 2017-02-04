@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_game_screen"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:background="@android:color/black"
+    tools:context="com.example.jord.i7657043.game_screen">
+
+    <com.example.jord.i7657043.NetwalkView
+        android:id="@+id/customView"
+        android:layout_width="wrap_content"
+        android:layout_height="354dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/lblPlayerName"
+        android:layout_gravity="left"
+        android:layout_marginTop="5dp"
+        android:textColor="@android:color/holo_orange_dark"
+        android:textSize="15sp" />
+
+    <TextView
+        android:text="@string/turns_label"
+        android:layout_gravity="center"
+        android:layout_marginTop="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/turnsLbl"
+        android:textSize="20sp"
+        android:textStyle="normal|bold"
+        android:textColor="@android:color/holo_orange_dark"
+        />
+
+    <LinearLayout
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="40dp"
+        android:layout_gravity="center">
+
+
+        <Button
+            android:text="@string/help"
+            android:layout_width="50dp"
+            android:layout_height="55dp"
+            android:id="@+id/btnHelp"
+            android:textColor="@android:color/holo_orange_dark"
+            />
+
+        <Button
+            android:text="@string/reset_maze"
+            android:layout_marginStart="90dp"
+            android:layout_marginLeft="900dp"
+            android:layout_width="150dp"
+            android:layout_height="55dp"
+            android:id="@+id/btnResetMaze"
+            android:textColor="@android:color/holo_orange_dark"/>
+    </LinearLayout>
+
+</LinearLayout>
