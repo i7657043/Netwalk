@@ -28,10 +28,16 @@ public class NetwalkView extends View {
     private TextView turnsLabel;
     private float eachCellLength, eachCellHeight;
 
-    ArrayList<Tile> tileArray = new ArrayList<Tile>();
+    private ArrayList<Tile> tileArray = new ArrayList<Tile>();
 
     public NetwalkView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        init();
+        gestDetect = new GestureDetector(context,new GridGestureListener());
+    }
+
+    public NetwalkView(Context context) {
+        super(context);
         init();
         gestDetect = new GestureDetector(context,new GridGestureListener());
     }
@@ -41,9 +47,7 @@ public class NetwalkView extends View {
         return super.onTouchEvent(event);
     }
 
-
-    //THIS IS INNER CLASS BECAUSE WE ONLY WANT OT REACT IN THE WAY WE ARE DEFINING HERE WHEN THIS SPECIFIC VIEW IS TOUCHED
-    class GridGestureListener extends GestureDetector.SimpleOnGestureListener
+    private class GridGestureListener extends GestureDetector.SimpleOnGestureListener
     {
         @Override
         public boolean onDown(MotionEvent ev)
@@ -78,14 +82,14 @@ public class NetwalkView extends View {
 
     }
 
-    public static void drawGrid(Canvas canvas, ArrayList<Tile> tileArray, int eachCellLength, int cols, int rows)
+    private static void drawGrid(Canvas canvas, ArrayList<Tile> tileArray, int eachCellLength, int col, int row)
     {
         int prevLeft = 0;
         int prevTop = 0;
 
-        for (int i =0; i<cols; i++)
+        for (int i =0; i<col; i++)
         {
-            for (int j=0; j<rows; j++)
+            for (int j=0; j<row; j++)
             {
                 for (Tile tile : tileArray) {
                     if (game.nextTile(i,j).compareTo(tile.getId()) == 0) {
@@ -93,7 +97,6 @@ public class NetwalkView extends View {
                         break;
                     }
                 }
-
                 //increase for next tile
                 prevLeft += eachCellLength;
             }
@@ -103,10 +106,9 @@ public class NetwalkView extends View {
             //start next at beginning
             prevLeft=0;
         }
-
     }
 
-    public void updateTurnsLabel()
+    private void updateTurnsLabel()
     {
         if (game.getTurn()>0)
         {

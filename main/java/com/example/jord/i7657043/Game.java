@@ -1,17 +1,15 @@
 package com.example.jord.i7657043;
 
 /**
- * Created by Jord on 09/01/2017.
+ * Created by Jordan Griffiths on 09/01/2017.
  */
 
 public class Game {
-    //private static Game game = new Game();
-
     private NetwalkGrid grid;
-
     private int turns = 0;
     private int difficulty;
-    //Player should be a class
+
+    //Player can eventually be a class, if we need to store more than playerName
     private String playerName;
 
 
@@ -34,6 +32,8 @@ public class Game {
                 break;
         }
     }
+
+    //Need method to check win
 
     public Integer nextTile(int x, int y)
     {

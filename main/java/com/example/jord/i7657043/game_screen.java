@@ -11,11 +11,11 @@ import android.widget.TextView;
 
 public class game_screen extends AppCompatActivity {
 
-    Button btnResetMaze, btnHelp, btnExitGameScreen;
+    private Button btnResetMaze, btnHelp, btnExitGameScreen;
     private TextView lblTurns,lblPlayerName;
     private View custView;
-    String playerName;
-    int difficulty;
+    private String playerName;
+    private int difficulty;
 
     public static Game game;
 
@@ -25,11 +25,10 @@ public class game_screen extends AppCompatActivity {
         setContentView(R.layout.activity_game_screen);
         Intent i1 = getIntent();
 
-        //Get the difficulty level, selected by the dialog
         difficulty = i1.getIntExtra("Diff",0);
+
         playerName = i1.getStringExtra("player");
 
-        //If player has set a name show it
         if (playerName.length()>0) {
             lblPlayerName = (TextView) findViewById(R.id.lblPlayerName);
             lblPlayerName.setText(getString(R.string.welcome_msg) + " " + playerName);
@@ -39,12 +38,11 @@ public class game_screen extends AppCompatActivity {
             playerName = "default";
         }
 
-        //create new Game
         game = new Game(difficulty, playerName);
 
 
 
-        custView = (View) findViewById(R.id.customView);
+        custView = findViewById(R.id.customView);
         btnResetMaze = (Button) findViewById(R.id.btnResetMaze);
         btnResetMaze.setOnClickListener(new btnListener1());
         btnHelp = (Button) findViewById(R.id.btnHelp);
@@ -52,7 +50,7 @@ public class game_screen extends AppCompatActivity {
 
     }
 
-    public class btnListener1 implements View.OnClickListener
+    private class btnListener1 implements View.OnClickListener
     {
         @Override
         public void onClick(View v)

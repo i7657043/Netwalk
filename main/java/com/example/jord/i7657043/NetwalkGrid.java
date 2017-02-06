@@ -9,7 +9,7 @@ import java.util.Random;
 /**
  * A grid representation for the netwalk game
  */
-public class NetwalkGrid {
+class NetwalkGrid {
 
     public static final int CONNECTORMASK = 0b1111;
     public static final int PROPMASK = ~0b1111;

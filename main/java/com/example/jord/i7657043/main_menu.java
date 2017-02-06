@@ -11,10 +11,10 @@ import android.widget.EditText;
 
 public class main_menu extends AppCompatActivity{
 
-    Button btnPlay, btnExit;
-    Intent i1;
-    //Could have a player class for this but for now its here
-    EditText playerName;
+    private Button btnPlay;
+    private Button btnExit;
+    private Intent i1;
+    private EditText playerName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,25 +27,9 @@ public class main_menu extends AppCompatActivity{
         btnExit.setOnClickListener(new btnListener());
         playerName = (EditText) findViewById(R.id.txtBoxPlayerName);
 
-
-        /*This way is not as clean at handling different events
-        btnPlay.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent i1 = new Intent(main_menu.this,game_screen.class);
-                startActivity(i1);
-            }
-        });
-
-        btnExit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                System.exit(0);
-            }
-        });*/
     }
 
-    public class btnListener implements View.OnClickListener
+    private class btnListener implements View.OnClickListener
     {
         @Override
         public void onClick(View v)

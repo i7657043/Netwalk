@@ -6,7 +6,7 @@ import android.graphics.Bitmap;
  * Created by Jord on 03/02/2017.
  */
 
-public class Tile {
+class Tile {
 
     private Bitmap img;
     private Integer identifier;

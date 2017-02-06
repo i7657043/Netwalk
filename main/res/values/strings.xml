@@ -1,6 +1,5 @@
 <resources>
-    <string name="app_name">Netwalk Game</string>
-    <string name="student_username">i7657043</string>
+    <string name="app_name">Netwalk i7657043</string>
     <string name="play_game">Play Game</string>
     <string name="exit_game">Exit</string>
     <string name="logo_description">NetWalk Logo</string>
@@ -11,7 +10,7 @@
     <string name="welcome_msg">Welcome </string>
     <string name="author">by Jordan Griffiths</string>
     <string name="help_title">Help - Read below for instructions</string>
-    <string name="instructions">The Netwalk game will start with a randomised grid of 25 square tiles (5x5), with one tile representing the server, other tiles representing nodes, and the remaining tiles representing pipe connectors.\n\nWhen a user touches one of the tiles, their selection will be rotated 90 degrees to the right. To win the game all tiles in the grid must be joined correctly to other tiles, their corresponding nodes, and the server.\n\nThe user who can complete the maze in the lowest amount of turns holds the High score.</string>
+    <string name="instructions">The Netwalk game will start with a randomised grid of square tiles, the size of which is based on the selected difficulty level. In every game one tile represents the server, other tiles represent nodes, and the remaining tiles representing pipe connectors.\n\nWhen a user touches one of the tiles, their selection will be rotated 90 degrees to the right. To win the game all tiles in the grid must be joined correctly to other tiles, their corresponding nodes, and the server.\n\nThe user who can complete the maze in the lowest amount of turns holds the High score.</string>
 
 
 

@@ -34,6 +34,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="31dp"
         android:paddingLeft="3sp"
+        android:paddingRight="3sp"
         android:textColor="?attr/actionModeSplitBackground" />
 
     <Button

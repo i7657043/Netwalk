@@ -4,8 +4,8 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/journey"
-        android:label="@string/student_username"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.NoActionBar">
         <activity android:name="com.example.jord.i7657043.main_menu">
@@ -16,7 +16,7 @@
             </intent-filter>
         </activity>
         <activity android:name="com.example.jord.i7657043.game_screen" />
-        <activity android:name="com.example.jord.i7657043.help_screen"></activity>
+        <activity android:name="com.example.jord.i7657043.help_screen" />
     </application>
 
 </manifest>
