@@ -11,8 +11,6 @@ import android.widget.EditText;
 
 public class MainMenu extends AppCompatActivity{
 
-    private Button btnPlay;
-    private Button btnExit;
     private Intent i1;
     private EditText playerName;
 
@@ -21,14 +19,14 @@ public class MainMenu extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_menu);
 
-        btnPlay = (Button) findViewById(R.id.btnPlayGame);
+        Button btnPlay = (Button) findViewById(R.id.btnPlayGame);
         btnPlay.setOnClickListener(new btnListener());
-        btnExit = (Button) findViewById(R.id.btnExit);
+        Button btnExit = (Button) findViewById(R.id.btnExit);
         btnExit.setOnClickListener(new btnListener());
         playerName = (EditText) findViewById(R.id.txtBoxPlayerName);
 
 
-        /*This way is not as clean at handling different events
+        /*This is an alternative way of handling different events
         btnPlay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

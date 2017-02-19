@@ -11,7 +11,6 @@ import android.widget.TextView;
 
 public class GameScreen extends AppCompatActivity {
 
-    private Button btnResetMaze;
     private View nView;
     public static NetwalkGrid n;
     private int numOfTiles;
@@ -22,7 +21,7 @@ public class GameScreen extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game_screen);
 
-        btnResetMaze = (Button) findViewById(R.id.btnResetMaze);
+        Button btnResetMaze = (Button) findViewById(R.id.btnResetMaze);
         btnResetMaze.setOnClickListener(new btnListener1());
         Button btnHelp = (Button) findViewById(R.id.btnHelp);
         btnHelp.setOnClickListener(new btnListener1());
@@ -46,7 +45,7 @@ public class GameScreen extends AppCompatActivity {
                 numOfTiles = 5;
                 break;
             case 3:
-                numOfTiles = 7;
+                numOfTiles = 6;
                 break;
             default:
                 numOfTiles = 3;

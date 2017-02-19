@@ -6,7 +6,7 @@
     <string name="turns_label">Turns: </string>
     <string name="help">\?</string>
     <string name="reset_maze">Reset Maze</string>
-    <string name="lbl_high_score">Enter player name for high score</string>
+    <string name="lbl_high_score">Enter player name</string>
     <string name="welcome_msg">Welcome </string>
     <string name="author">by Jordan Griffiths</string>
     <string name="help_title">Help - Read below for instructions</string>

@@ -20,9 +20,9 @@ import static com.example.jord.i7657043.GameScreen.n;
 public class NetwalkView extends View {
 
     private final GestureDetector gestDetect;
-    private TextView turnsLabel;
-    private float prevLeft, prevTop;
     private float eachCellLength, eachCellHeight;
+    private boolean gameWon = false;
+
 
     //Hashmap could be used to show the correct image instead of Tile class
     //HashMap<Integer, Bitmap> tileMap = new HashMap<>();
@@ -63,9 +63,11 @@ public class NetwalkView extends View {
                 if (n.checkWin())
                 {
                     Toast.makeText(getContext(), "You win in " + n.getTurn() + " turns!!!", Toast.LENGTH_LONG).show();
-                    won=true;
+                    gameWon =true;
                     updateTurnsLabel();
                     n.resetTurns();
+                    //Ideally want to pause a few seconds here so user can see the screen they have won, however it resets automatically after failing to implement the Thread.sleep() method
+                    n = new NetwalkGrid(n.getColumns(),n.getRows());
                 }
                 else
                 {
@@ -75,17 +77,18 @@ public class NetwalkView extends View {
             }
         }
     }
-    boolean won = false;
+
     private void updateTurnsLabel()
     {
+        TextView turnsLabel;
         if (n.getTurn()>0)
         {
             turnsLabel = (TextView) ((Activity) getContext()).findViewById(R.id.turnsLbl);
-            if (won)
+            if (gameWon)
             {
                 String temp = "Winner ! " + Integer.toString(n.getTurn()) + " turns !";
                 turnsLabel.setText(temp);
-                won=false;
+                gameWon =false;
             }
             else
             {
@@ -116,8 +119,8 @@ public class NetwalkView extends View {
     {
         eachCellLength = getWidth()/n.getColumns();
         eachCellHeight = getHeight()/n.getRows();
-        prevLeft = 0;
-        prevTop = 0;
+        float prevLeft = 0;
+        float prevTop = 0;
 
         for (int i =0; i<n.getRows(); i++)
         {
@@ -129,7 +132,7 @@ public class NetwalkView extends View {
                 {
                     if (val.compareTo(t.getId())==0)
                     {
-                        canvas.drawBitmap(t.getImg(), null, new Rect((int)prevLeft,(int)prevTop,(int)(prevLeft+eachCellLength),(int)(prevTop+eachCellLength)), null);
+                        canvas.drawBitmap(t.getImg(), null, new Rect((int) prevLeft,(int) prevTop,(int)(prevLeft +eachCellLength),(int)(prevTop +eachCellLength)), null);
                         break;
                     }
                 }
@@ -143,7 +146,7 @@ public class NetwalkView extends View {
                 prevLeft += eachCellLength;
             }
             prevTop += eachCellLength;
-            prevLeft=0;
+            prevLeft =0;
         }
     }
 

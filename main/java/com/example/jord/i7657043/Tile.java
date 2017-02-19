@@ -4,8 +4,8 @@ import android.graphics.Bitmap;
 
 class Tile {
 
-    private Bitmap img;
-    private Integer identifier;
+    private final Bitmap img;
+    private final Integer identifier;
 
     public Tile(Bitmap img, int identifier)
     {

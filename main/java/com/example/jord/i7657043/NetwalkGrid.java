@@ -74,15 +74,15 @@ public class NetwalkGrid {
     private final int mColumns;
     /** The height of the grid */
     private final int mRows;
-    private final int mServerPos;
 
 
     public NetwalkGrid(int columns, int rows) {
+        this.turns = 0;
         this.mColumns = columns;
         this.mRows = rows;
         mGrid = new int[columns * rows];
         winningGrid = new int[columns*rows];
-        mServerPos = generate();
+        int mServerPos = generate();
         winningGrid = mGrid.clone();
         randomiseGrid();
     }
