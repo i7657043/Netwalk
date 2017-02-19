@@ -5,11 +5,28 @@ import java.util.List;
 import java.util.Random;
 
 
-
 /**
  * A grid representation for the netwalk game
  */
-class NetwalkGrid {
+public class NetwalkGrid {
+
+    public void turnIncrement()
+    {
+        this.turns++;
+    }
+
+    public int getTurn()
+    {
+        return this.turns;
+    }
+
+    public void resetTurns()
+    {
+        this.turns = 0;
+    }
+
+    private int turns=0;
+
 
     public static final int CONNECTORMASK = 0b1111;
     public static final int PROPMASK = ~0b1111;
@@ -49,7 +66,9 @@ class NetwalkGrid {
             };
 
     /** The actual grid as a flat array */
-    private final int[] mGrid;
+    final int[] mGrid;
+    private int[] winningGrid;
+
 
     /** The width of the grid */
     private final int mColumns;
@@ -57,12 +76,15 @@ class NetwalkGrid {
     private final int mRows;
     private final int mServerPos;
 
+
     public NetwalkGrid(int columns, int rows) {
         this.mColumns = columns;
         this.mRows = rows;
         mGrid = new int[columns * rows];
-
+        winningGrid = new int[columns*rows];
         mServerPos = generate();
+        winningGrid = mGrid.clone();
+        randomiseGrid();
     }
 
     private int generate() {
@@ -109,8 +131,13 @@ class NetwalkGrid {
                 case DOWN:
                     notifyChange();
                     mGrid[i] |= NODE;
+
             }
+
+            //winningGrid[i] = mGrid[i];
         }
+        //Winning grid is now a flat array of the correct numbers,
+        //My winning array is saved as a flat array, yet the mgrid changes to display cells 1,2,3 down instead of across ?
         return serverPos;
     }
 
@@ -145,10 +172,13 @@ class NetwalkGrid {
         if (pos2 - pos1 == 1) {
             mGrid[pos1] |= RIGHT;
             mGrid[pos2] |= LEFT;
-        } else {
+        }
+        else {
             mGrid[pos1] |= DOWN;
             mGrid[pos2] |= UP;
         }
+
+
         // Call the hook that can be used to redraw
         notifyChange();
     }
@@ -163,7 +193,31 @@ class NetwalkGrid {
         final int gridPos = gridPos(col, row);
         final int extraBits = mGrid[gridPos] & PROPMASK;
         mGrid[gridPos] = extraBits | ROTATE_RIGHT_TABLE[mGrid[gridPos]&CONNECTORMASK];
-        notifyChange();
+        //notifyChange();
+    }
+
+    private void randomiseGrid() {
+        Random rand = new Random();
+        for (int i = 0; i < this.getColumns(); i++) {
+            for (int j = 0; j < this.getRows(); j++) {
+                int randomNum = rand.nextInt(4) + 1;
+                for (int rotate = 0; rotate < randomNum; rotate++) {
+                    this.rotateRight(i, j);
+                }
+            }
+        }
+    }
+
+    public boolean checkWin()
+    {
+        for (int i = 0; i< mGrid.length;i++)
+        {
+            if(winningGrid[i] != mGrid[i])
+            {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
@@ -264,43 +318,6 @@ class NetwalkGrid {
             throw new IndexOutOfBoundsException("The coordinates (" + x + ", " + y + ") are not valid.");
         }
         return mGrid[gridPos(x, y)];
-    }
-
-    //returns the specific tile hash to draw
-    public Integer tileToDraw(int x, int y)
-    {
-        Integer hash = 0;
-        if (isServer(x,y))
-        {
-            System.out.print(" SERVER ");
-            hash += 32;
-        }
-        else if (isNode(x,y))
-        {
-            System.out.print(" NODE ");
-            hash += 16;
-        }
-        if ((getGridElem(x,y) & LEFT)!=0)
-        {
-            hash += 1;
-            System.out.print(" left ");
-        }
-        if ((getGridElem(x,y) & RIGHT)!=0)
-        {
-            hash += 4;
-            System.out.print(" right ");
-        }
-        if ((getGridElem(x,y) & UP)!=0)
-        {
-            hash += 2;
-            System.out.print(" up ");
-        }
-        if ((getGridElem(x,y) & DOWN)!=0)
-        {
-            hash += 8;
-            System.out.print(" down ");
-        }
-        return hash;
     }
 
     /**

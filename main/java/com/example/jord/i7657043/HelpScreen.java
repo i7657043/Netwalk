@@ -1,9 +1,9 @@
 package com.example.jord.i7657043;
 
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
+        import android.os.Bundle;
 
-public class help_screen extends AppCompatActivity {
+public class HelpScreen extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

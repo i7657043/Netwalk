@@ -9,7 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
-public class main_menu extends AppCompatActivity{
+public class MainMenu extends AppCompatActivity{
 
     private Button btnPlay;
     private Button btnExit;
@@ -27,6 +27,22 @@ public class main_menu extends AppCompatActivity{
         btnExit.setOnClickListener(new btnListener());
         playerName = (EditText) findViewById(R.id.txtBoxPlayerName);
 
+
+        /*This way is not as clean at handling different events
+        btnPlay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i1 = new Intent(MainMenu.this,GameScreen.class);
+                startActivity(i1);
+            }
+        });
+
+        btnExit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                System.exit(0);
+            }
+        });*/
     }
 
     private class btnListener implements View.OnClickListener
@@ -34,16 +50,17 @@ public class main_menu extends AppCompatActivity{
         @Override
         public void onClick(View v)
         {
-            i1 = new Intent(main_menu.this,game_screen.class);
+            i1 = new Intent(MainMenu.this,GameScreen.class);
             if (playerName.getText()!=null)
             {
                 i1.putExtra("player",playerName.getText().toString());
             }
             CharSequence seq[] = {"Easy", "Medium", "Hard"};
+
             switch (v.getId())
             {
                 case (R.id.btnPlayGame):
-                    final AlertDialog.Builder alert = new AlertDialog.Builder(main_menu.this);
+                    final AlertDialog.Builder alert = new AlertDialog.Builder(MainMenu.this);
                     alert.setTitle("Pick a difficulty");
 
                     alert.setItems(seq, new DialogInterface.OnClickListener() {

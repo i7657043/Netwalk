@@ -5,39 +5,32 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
-import static com.example.jord.i7657043.game_screen.game;
-
-/**
- * Created by Jord on 14/12/2016.
- */
+import static com.example.jord.i7657043.GameScreen.n;
 
 public class NetwalkView extends View {
 
-    private GestureDetector gestDetect;
-    private Paint paint1, paint2, paint3;
+    private final GestureDetector gestDetect;
     private TextView turnsLabel;
+    private float prevLeft, prevTop;
     private float eachCellLength, eachCellHeight;
 
-    private ArrayList<Tile> tileArray = new ArrayList<Tile>();
+    //Hashmap could be used to show the correct image instead of Tile class
+    //HashMap<Integer, Bitmap> tileMap = new HashMap<>();
+
+    private final ArrayList<Tile> TILES = new ArrayList<Tile>();
 
     public NetwalkView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        init();
-        gestDetect = new GestureDetector(context,new GridGestureListener());
-    }
-
-    public NetwalkView(Context context) {
-        super(context);
         init();
         gestDetect = new GestureDetector(context,new GridGestureListener());
     }
@@ -63,179 +56,296 @@ public class NetwalkView extends View {
             Integer colTouched = (int) (Math.floor(x/eachCellLength));
             Integer rowTouched = (int) (Math.floor(y/eachCellHeight));
 
-            game.takeTurn(rowTouched,colTouched);
+            if(colTouched<=n.getColumns()&&rowTouched<=n.getRows())
+            {
+                n.rotateRight(colTouched, rowTouched);
+                n.turnIncrement();
+                if (n.checkWin())
+                {
+                    Toast.makeText(getContext(), "You win in " + n.getTurn() + " turns!!!", Toast.LENGTH_LONG).show();
+                    won=true;
+                    updateTurnsLabel();
+                    n.resetTurns();
+                }
+                else
+                {
+                    updateTurnsLabel();
+                }
+                invalidate();
+            }
+        }
+    }
+    boolean won = false;
+    private void updateTurnsLabel()
+    {
+        if (n.getTurn()>0)
+        {
+            turnsLabel = (TextView) ((Activity) getContext()).findViewById(R.id.turnsLbl);
+            if (won)
+            {
+                String temp = "Winner ! " + Integer.toString(n.getTurn()) + " turns !";
+                turnsLabel.setText(temp);
+                won=false;
+            }
+            else
+            {
+                String temp = "Turns: " + Integer.toString(n.getTurn());
+                turnsLabel.setText(temp);
+            }
 
-            invalidate();
+        }
+        else
+        {
+            turnsLabel = (TextView) ((Activity)getContext()).findViewById(R.id.turnsLbl);
+            turnsLabel.setText(getResources().getString(R.string.turns_label));
         }
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        eachCellLength = getWidth()/game.getGridColumns();
-        eachCellHeight = getHeight()/game.getGridRows();
-
-        drawGrid(canvas,tileArray,(int)eachCellLength,game.getGridColumns(),game.getGridRows());
-
-        //Need this method to update turn label every time View is clicked
-        updateTurnsLabel();
+        drawGrid(canvas);
+        //Update turn label every time View is clicked
+        if (n.getTurn()>0) {
+            updateTurnsLabel();
+        }
 
     }
 
-    private static void drawGrid(Canvas canvas, ArrayList<Tile> tileArray, int eachCellLength, int col, int row)
+    private void drawGrid(Canvas canvas)
     {
-        int prevLeft = 0;
-        int prevTop = 0;
+        eachCellLength = getWidth()/n.getColumns();
+        eachCellHeight = getHeight()/n.getRows();
+        prevLeft = 0;
+        prevTop = 0;
 
-        for (int i =0; i<col; i++)
+        for (int i =0; i<n.getRows(); i++)
         {
-            for (int j=0; j<row; j++)
+            for (int j=0; j<n.getColumns(); j++)
             {
-                for (Tile tile : tileArray) {
-                    if (game.nextTile(i,j).compareTo(tile.getId()) == 0) {
-                        canvas.drawBitmap(tile.getImg(), null, new Rect(prevLeft, prevTop, (prevLeft + eachCellLength),(prevTop + eachCellLength)), null);
+                Integer val = n.getGridElem(j,i);
+
+                for (Tile t : TILES)
+                {
+                    if (val.compareTo(t.getId())==0)
+                    {
+                        canvas.drawBitmap(t.getImg(), null, new Rect((int)prevLeft,(int)prevTop,(int)(prevLeft+eachCellLength),(int)(prevTop+eachCellLength)), null);
                         break;
                     }
                 }
-                //increase for next tile
+
+                //For use with hashmap array alternative
+                /*
+                int val = n.getGridElem(i,j);
+                Bitmap img1 = Bitmap.createBitmap(tileMap.get(val));
+                canvas.drawBitmap(img1, null, new Rect((int)prevLeft,(int)prevTop,(int)(prevLeft+eachCellLength),(int)(prevTop+eachCellLength)), null);
+                */
                 prevLeft += eachCellLength;
             }
-            //increase for next tile
             prevTop += eachCellLength;
-
-            //start next at beginning
             prevLeft=0;
         }
     }
 
-    private void updateTurnsLabel()
-    {
-        if (game.getTurn()>0)
-        {
-            turnsLabel = (TextView) ((Activity)getContext()).findViewById(R.id.turnsLbl);
-            String temp = "Turns: " + Integer.toString(game.getTurn());
-            turnsLabel.setText(temp);
-        }
-        else
-        {
-            turnsLabel = (TextView) ((Activity)getContext()).findViewById(R.id.turnsLbl);
-            turnsLabel.setText(R.string.turns_label);
-        }
-    }
 
-
-    private void init()
-    {
+    //For use with hashmap array
+   /* private void init() {
         Bitmap p3 = BitmapFactory.decodeResource(this.getResources(), R.drawable.p3);
-        Tile tile = new Tile(p3,3);
-        tileArray.add(tile);
+        tileMap.put(3,p3);
 
         Bitmap p5 = BitmapFactory.decodeResource(this.getResources(), R.drawable.p5);
-        tile = new Tile(p5,5);
-        tileArray.add(tile);
+        tileMap.put(5,p5);
 
         Bitmap p6 = BitmapFactory.decodeResource(this.getResources(), R.drawable.p6);
-        tile = new Tile(p6,6);
-        tileArray.add(tile);
+        tileMap.put(6,p6);
 
         Bitmap p7 = BitmapFactory.decodeResource(this.getResources(), R.drawable.p7);
-        tile = new Tile(p7,7);
-        tileArray.add(tile);
+        tileMap.put(7,p7);
 
         Bitmap p9 = BitmapFactory.decodeResource(this.getResources(), R.drawable.p9);
-        tile = new Tile(p9,9);
-        tileArray.add(tile);
+        tileMap.put(9,p9);
+
+        Bitmap p10 = BitmapFactory.decodeResource(this.getResources(), R.drawable.p10);
+        tileMap.put(10,p10);
+
+        Bitmap p11 = BitmapFactory.decodeResource(this.getResources(), R.drawable.p11);
+        tileMap.put(11,p11);
+
+        Bitmap p12 = BitmapFactory.decodeResource(this.getResources(), R.drawable.p12);
+        tileMap.put(12,p12);
+
+        Bitmap p13 = BitmapFactory.decodeResource(this.getResources(), R.drawable.p13);
+        tileMap.put(13,p13);
+
+        Bitmap p14 = BitmapFactory.decodeResource(this.getResources(), R.drawable.p14);
+        tileMap.put(14,p14);
+
+        Bitmap n17 = BitmapFactory.decodeResource(this.getResources(), R.drawable.n17);
+        tileMap.put(17,n17);
+
+        Bitmap n18 = BitmapFactory.decodeResource(this.getResources(), R.drawable.n18);
+        tileMap.put(18,n18);
+
+        Bitmap n20 = BitmapFactory.decodeResource(this.getResources(), R.drawable.n20);
+        tileMap.put(20,n20
+
+        Bitmap n24 = BitmapFactory.decodeResource(this.getResources(), R.drawable.n24);
+        tileMap.put(24,n24);
+
+        Bitmap s88 = BitmapFactory.decodeResource(this.getResources(), R.drawable.s88);
+        tileMap.put(88,s88);
+
+        Bitmap s84 = BitmapFactory.decodeResource(this.getResources(), R.drawable.s84);
+        tileMap.put(84s84);
+
+        Bitmap s92 = BitmapFactory.decodeResource(this.getResources(), R.drawable.s92);
+        tileMap.put(92,s92);
+
+        Bitmap s82 = BitmapFactory.decodeResource(this.getResources(), R.drawable.s82);
+        tileMap.put(82s82);
+
+        Bitmap s90 = BitmapFactory.decodeResource(this.getResources(), R.drawable.s90);
+        tileMap.put(90,s90);
+
+        Bitmap s86 = BitmapFactory.decodeResource(this.getResources(), R.drawable.s86);
+        tileMap.put(86,s86);
+
+        Bitmap s94 = BitmapFactory.decodeResource(this.getResources(), R.drawable.s94);
+        tileMap.put(94,s94);
+
+        Bitmap s81 = BitmapFactory.decodeResource(this.getResources(), R.drawable.s81);
+        tileMap.put(81,s81);
+
+        Bitmap s89 = BitmapFactory.decodeResource(this.getResources(), R.drawable.s89);
+        tileMap.put(89,s89);
+
+        Bitmap s85 = BitmapFactory.decodeResource(this.getResources(), R.drawable.s85);
+        tileMap.put(85,s85);
+
+        Bitmap s93 = BitmapFactory.decodeResource(this.getResources(), R.drawable.s93);
+        tileMap.put(93,s93);
+
+        Bitmap s83 = BitmapFactory.decodeResource(this.getResources(), R.drawable.s83);
+        tileMap.put(83,s83);
+
+        Bitmap s91 = BitmapFactory.decodeResource(this.getResources(), R.drawable.s91);
+        tileMap.put(91,s91);
+
+        Bitmap s87 = BitmapFactory.decodeResource(this.getResources(), R.drawable.s87);
+        tileMap.put(87,s87);
+    }*/
+
+    private void init() {
+        Bitmap p12 = BitmapFactory.decodeResource(this.getResources(), R.drawable.p12);
+        Tile tile = new Tile(p12,12);
+        TILES.add(tile);
 
         Bitmap p10 = BitmapFactory.decodeResource(this.getResources(), R.drawable.p10);
         tile = new Tile(p10,10);
-        tileArray.add(tile);
+        TILES.add(tile);
 
-        Bitmap p11= BitmapFactory.decodeResource(this.getResources(), R.drawable.p11);
-        tile = new Tile(p11,11);
-        tileArray.add(tile);
-
-        Bitmap p12 = BitmapFactory.decodeResource(this.getResources(), R.drawable.p12);
-        tile = new Tile(p12,12);
-        tileArray.add(tile);
-
-        Bitmap p13 = BitmapFactory.decodeResource(this.getResources(), R.drawable.p13);
-        tile = new Tile(p13,13);
-        tileArray.add(tile);
+        Bitmap p6 = BitmapFactory.decodeResource(this.getResources(), R.drawable.p6);
+        tile = new Tile(p6,6);
+        TILES.add(tile);
 
         Bitmap p14 = BitmapFactory.decodeResource(this.getResources(), R.drawable.p14);
         tile = new Tile(p14,14);
-        tileArray.add(tile);
+        TILES.add(tile);
 
-        Bitmap n17 = BitmapFactory.decodeResource(this.getResources(), R.drawable.n17);
-        tile = new Tile(n17,17);
-        tileArray.add(tile);
+        Bitmap p9 = BitmapFactory.decodeResource(this.getResources(), R.drawable.p9);
+        tile = new Tile(p9,9);
+        TILES.add(tile);
 
-        Bitmap n18 = BitmapFactory.decodeResource(this.getResources(), R.drawable.n18);
-        tile = new Tile(n18,18);
-        tileArray.add(tile);
+        Bitmap p5 = BitmapFactory.decodeResource(this.getResources(), R.drawable.p5);
+        tile = new Tile(p5,5);
+        TILES.add(tile);
 
-        Bitmap n20 = BitmapFactory.decodeResource(this.getResources(), R.drawable.n20);
-        tile = new Tile(n20,20);
-        tileArray.add(tile);
+        Bitmap p13 = BitmapFactory.decodeResource(this.getResources(), R.drawable.p13);
+        tile = new Tile(p13,13);
+        TILES.add(tile);
 
-        Bitmap n24 = BitmapFactory.decodeResource(this.getResources(), R.drawable.n24);
-        tile = new Tile(n24,24);
-        tileArray.add(tile);
+        Bitmap p3 = BitmapFactory.decodeResource(this.getResources(), R.drawable.p3);
+        tile = new Tile(p3,3);
+        TILES.add(tile);
 
-        Bitmap s33 = BitmapFactory.decodeResource(this.getResources(), R.drawable.s33);
-        tile = new Tile(s33,33);
-        tileArray.add(tile);
+        Bitmap p11 = BitmapFactory.decodeResource(this.getResources(), R.drawable.p11);
+        tile = new Tile(p11,11);
+        TILES.add(tile);
 
-        Bitmap s34 = BitmapFactory.decodeResource(this.getResources(), R.drawable.s34);
-        tile = new Tile(s34,34);
-        tileArray.add(tile);
+        Bitmap p7 = BitmapFactory.decodeResource(this.getResources(), R.drawable.p7);
+        tile = new Tile(p7,7);
+        TILES.add(tile);
 
-        Bitmap s35 = BitmapFactory.decodeResource(this.getResources(), R.drawable.s35);
-        tile = new Tile(s35,35);
-        tileArray.add(tile);
+        Bitmap n40 = BitmapFactory.decodeResource(this.getResources(), R.drawable.n40);
+        tile = new Tile(n40,40);
+        TILES.add(tile);
 
-        Bitmap s36 = BitmapFactory.decodeResource(this.getResources(), R.drawable.s36);
-        tile = new Tile(s36,36);
-        tileArray.add(tile);
+        Bitmap n36 = BitmapFactory.decodeResource(this.getResources(), R.drawable.n34);
+        tile = new Tile(n36,36);
+        TILES.add(tile);
 
-        Bitmap s37 = BitmapFactory.decodeResource(this.getResources(), R.drawable.s37);
-        tile = new Tile(s37,37);
-        tileArray.add(tile);
+        Bitmap n34 = BitmapFactory.decodeResource(this.getResources(), R.drawable.n20);
+        tile = new Tile(n34,34);
+        TILES.add(tile);
 
-        Bitmap s38 = BitmapFactory.decodeResource(this.getResources(), R.drawable.s38);
-        tile = new Tile(s38,38);
-        tileArray.add(tile);
+        Bitmap n33 = BitmapFactory.decodeResource(this.getResources(), R.drawable.n33);
+        tile = new Tile(n33,33);
+        TILES.add(tile);
 
-        Bitmap s39 = BitmapFactory.decodeResource(this.getResources(), R.drawable.s39);
-        tile = new Tile(s39,39);
-        tileArray.add(tile);
+        Bitmap s88 = BitmapFactory.decodeResource(this.getResources(), R.drawable.s88);
+        tile = new Tile(s88,88);
+        TILES.add(tile);
 
-        Bitmap s40 = BitmapFactory.decodeResource(this.getResources(), R.drawable.s40);
-        tile = new Tile(s40,40);
-        tileArray.add(tile);
+        Bitmap s84 = BitmapFactory.decodeResource(this.getResources(), R.drawable.s84);
+        tile = new Tile(s84,84);
+        TILES.add(tile);
 
-        Bitmap s41 = BitmapFactory.decodeResource(this.getResources(), R.drawable.s41);
-        tile = new Tile(s41,41);
-        tileArray.add(tile);
+        Bitmap s92 = BitmapFactory.decodeResource(this.getResources(), R.drawable.s92);
+        tile = new Tile(s92,92);
+        TILES.add(tile);
 
-        Bitmap s42 = BitmapFactory.decodeResource(this.getResources(), R.drawable.s42);
-        tile = new Tile(s42,42);
-        tileArray.add(tile);
+        Bitmap s82 = BitmapFactory.decodeResource(this.getResources(), R.drawable.s82);
+        tile = new Tile(s82,82);
+        TILES.add(tile);
 
-        Bitmap s43 = BitmapFactory.decodeResource(this.getResources(), R.drawable.s43);
-        tile = new Tile(s43,43);
-        tileArray.add(tile);
+        Bitmap s90 = BitmapFactory.decodeResource(this.getResources(), R.drawable.s90);
+        tile = new Tile(s90,90);
+        TILES.add(tile);
 
-        Bitmap s44 = BitmapFactory.decodeResource(this.getResources(), R.drawable.s44);
-        tile = new Tile(s44,44);
-        tileArray.add(tile);
+        Bitmap s86 = BitmapFactory.decodeResource(this.getResources(), R.drawable.s86);
+        tile = new Tile(s86,86);
+        TILES.add(tile);
 
-        Bitmap s45 = BitmapFactory.decodeResource(this.getResources(), R.drawable.s45);
-        tile = new Tile(s45,45);
-        tileArray.add(tile);
+        Bitmap s94 = BitmapFactory.decodeResource(this.getResources(), R.drawable.s94);
+        tile = new Tile(s94,94);
+        TILES.add(tile);
 
-        Bitmap s46 = BitmapFactory.decodeResource(this.getResources(), R.drawable.s46);
-        tile = new Tile(s46,46);
-        tileArray.add(tile);
+        Bitmap s81 = BitmapFactory.decodeResource(this.getResources(), R.drawable.s81);
+        tile = new Tile(s81,81);
+        TILES.add(tile);
+
+        Bitmap s89 = BitmapFactory.decodeResource(this.getResources(), R.drawable.s89);
+        tile = new Tile(s89,89);
+        TILES.add(tile);
+
+        Bitmap s85 = BitmapFactory.decodeResource(this.getResources(), R.drawable.s85);
+        tile = new Tile(s85,85);
+        TILES.add(tile);
+
+        Bitmap s93 = BitmapFactory.decodeResource(this.getResources(), R.drawable.s93);
+        tile = new Tile(s93,93);
+        TILES.add(tile);
+
+        Bitmap s83 = BitmapFactory.decodeResource(this.getResources(), R.drawable.s83);
+        tile = new Tile(s83,83);
+        TILES.add(tile);
+
+        Bitmap s91 = BitmapFactory.decodeResource(this.getResources(), R.drawable.s91);
+        tile = new Tile(s91,91);
+        TILES.add(tile);
+
+        Bitmap s87 = BitmapFactory.decodeResource(this.getResources(), R.drawable.s87);
+        tile = new Tile(s87,87);
+        TILES.add(tile);
     }
 }
